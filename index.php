@@ -23,8 +23,37 @@
 
 
 	// Carrega usuário usando login e a senha
+	//$usuario = new Usuario();
+	//$usuario->login("root", "123456");
+
+	//echo $usuario;
+
+	// FAZER INSERT DE UM NOVO USUÁRIO
+	//$aluno = new Usuario("aluno", "987654");
+
+	//$aluno->insert();
+
+	//echo $aluno;
+
+	//FAZER UPDATE DE UM USUÁRIO
+
+	//$usuario = new Usuario();
+
+	//$usuario->loadById(13);
+
+	//$usuario->update("aluno13", "654987");
+
+	//echo $usuario;
+
+
+	//DELETER UM USUÁRIO
 	$usuario = new Usuario();
-	$usuario->login("root", "123456");
+
+	$usuario->loadById(13);
+
+	$usuario->delete();
 
 	echo $usuario;
+
+
 ?>

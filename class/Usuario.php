@@ -46,12 +46,7 @@ class Usuario{
 		$results = $sql->select("SELECT * FROM tb_usuarios WHERE idusuario = :ID", array(":ID" => $id));
 
 		if (count($results)){
-			$row = $results[0];
-
-			$this->setIdUsuario($row['idusuario']);
-			$this->setDesLogin($row['deslogin']);
-			$this->setDesSenha($row['dessenha']);
-			$this->setDtCadastro(new DateTime($row['dtcadastro']));
+			$this->setData($results[0]);
 		}
 	}
 
@@ -85,17 +80,72 @@ class Usuario{
 		$results = $sql->select("SELECT * FROM tb_usuarios WHERE deslogin = :LOGIN AND dessenha = :PASSWORD", array(":LOGIN" => $login, ":PASSWORD" => $password));
 
 		if (count($results)){
-			$row = $results[0];
-
-			$this->setIdUsuario($row['idusuario']);
-			$this->setDesLogin($row['deslogin']);
-			$this->setDesSenha($row['dessenha']);
-			$this->setDtCadastro(new DateTime($row['dtcadastro']));
+			
+			$this->setData($results[0]);
+			
 		}else{
 			throw new Exception("Login e/ou Senha incorretos");
 			
 		}
 
+	}
+
+	public function setData($data){
+
+		$this->setIdUsuario($data['idusuario']);
+		$this->setDesLogin($data['deslogin']);
+		$this->setDesSenha($data['dessenha']);
+		$this->setDtCadastro(new DateTime($data['dtcadastro']));
+
+	}
+
+	public function insert(){
+
+		$sql = new Sql();
+
+		$results = $sql->select("CALL sp_usuarios_insert(:LOGIN, :PASSWORD)", array(
+			":LOGIN" => $this->getDesLogin(),
+			":PASSWORD" => $this->getDesSenha()
+		));
+
+		if (count($results)){
+			$this->setData($results[0]);
+		}
+
+	}
+
+	public function update($login, $password){
+
+		$this->setDesLogin($login);
+		$this->setDesSenha($password);
+
+		$sql = new Sql();
+
+		$sql->query("UPDATE tb_usuarios SET deslogin = :LOGIN, dessenha = :PASSWORD WHERE idusuario = :ID", array(
+			":LOGIN" => $this->getDesLogin(),
+			":PASSWORD" => $this->getDesSenha(),
+			":ID" => $this->getIdUsuario()
+		));
+
+	}
+
+	public function delete(){
+
+		$sql = new Sql();
+		$sql->query("DELETE FROM tb_usuarios WHERE idusuario = :ID", array(
+			":ID" => $this->getIdUsuario()
+		));
+
+		$this->setIdUsuario(0);
+		$this->setDesLogin("");
+		$this->setDesSenha("");
+		$this->setDtCadastro(new DateTime());
+
+	}
+
+	public function __construct($login = "", $password = ""){
+		$this->setDesLogin($login);
+		$this->setDesSenha($password);
 	}
 }
 
